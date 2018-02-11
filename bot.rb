@@ -135,7 +135,7 @@ if index.blank? == false
 				else
 					formatted_tweet << "Agenda HTML: http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last}"
 					
-					agenda = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last.gsub("_WEB", "")'))
+					agenda = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last.gsub("_WEB", "")}'))
 					agenda_items = []
 					
 					agenda.css(".TOCCell").each do |item|
