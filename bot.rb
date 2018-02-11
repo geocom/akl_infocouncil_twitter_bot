@@ -189,27 +189,27 @@ if index.blank? == false
 		 formatted_tweet << "#AucklandCouncil #PublicRecords #{hashtag_types_included.join(" ")}"
 		 puts "##Tweet Starts"
 		 puts formatted_tweet.join("\n")
-#		 begin
-#		 	 if tweet_image == ""
-#			 	client.update(formatted_tweet.join("\n"))
-#			 else
-#			 	client.update_with_media(formatted_tweet.join("\n"), File.new(tweet_image))
-#			 end
-#		 rescue => e
-#			 if e.message.include?("Tweet needs to be a bit shorter")
-#				 begin
-#					 if tweet_image == ""
-#					 	client.update((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"))
-#					 else
-#					 	client.update_with_media((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"), File.new(tweet_image))
-#					 end
-#				 rescue => e
-#					 puts e.message
-#				 end
-#			 else
-#				 puts e.message
-#			 end
-#		 end
+		 begin
+		 	 if tweet_image == ""
+			 	client.update(formatted_tweet.join("\n"))
+			 else
+			 	client.update_with_media(formatted_tweet.join("\n"), File.new(tweet_image))
+			 end
+		 rescue => e
+			 if e.message.include?("Tweet needs to be a bit shorter")
+				 begin
+					 if tweet_image == ""
+					 	client.update((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"))
+					 else
+					 	client.update_with_media((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"), File.new(tweet_image))
+					 end
+				 rescue => e
+					 puts e.message
+				 end
+			 else
+				 puts e.message
+			 end
+		 end
 		 puts "##Tweet Ends"
 	 end
 end
