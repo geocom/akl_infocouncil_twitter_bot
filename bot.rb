@@ -104,6 +104,7 @@ if index.blank? == false
 		 hashtag_types_included = []
 		 title_type = []
 		 addendum = ""
+		 tweet_image = ""
 		 if item[2][0].content.include?("Addendum")
 			 addendum = " Addendum"
 			 hashtag_types_included << "#CouncilAgendaAddendum"
@@ -127,12 +128,31 @@ if index.blank? == false
 		  formatted_tweet << "#{item[1]} #{title_type.join(" & ")} for the #{item[0].mday}#{DAY_ENDINGS[item[0].mday]} of #{item[0].strftime("%B %Y")}"
 		 ##This deals with Agendas
 		 if not item[2].count <= 0
-
+			 
 			 item[2].each do |url|
 				if url['href'].include?(".PDF") or url['href'].include?(".pdf")
 			 		formatted_tweet << "Agenda PDF: http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last}"
 				else
 					formatted_tweet << "Agenda HTML: http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last}"
+					
+					agenda = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last.gsub("_WEB", "")'))
+					agenda_items = []
+					
+					agenda.css(".TOCCell").each do |item|
+					  if not item == nil
+					    a = item.content.split("\u00A0")
+					    a.delete("")
+					    if a[1] != "" && a[1] != nil
+					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
+					    end
+					  end
+					end
+					puts agenda_items.join("\n")
+					if not Dir.exist?("#{Dir.pwd}/images")
+						`mkdir #{Dir.pwd}/images`
+					end
+					`convert -background white -fill navy -pointsize 15 -size 800x caption:'#{agenda_items.join("\n")}' #{Dir.pwd}/images/#{url['href'].split("?URL=").last}.png`
+					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("?URL=").last}.png"
 				end
 			end
 		 end
@@ -170,11 +190,19 @@ if index.blank? == false
 		 puts "##Tweet Starts"
 		 puts formatted_tweet.join("\n")
 		 begin
-			 client.update(formatted_tweet.join("\n"))
+		 	 if tweet_image == ""
+			 	client.update(formatted_tweet.join("\n"))
+			 else
+			 	client.update_with_media(formatted_tweet.join("\n"), File.new(tweet_image))
+			 end
 		 rescue => e
 			 if e.message.include?("Tweet needs to be a bit shorter")
 				 begin
-					 client.update((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"))
+					 if tweet_image == ""
+					 	client.update((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"))
+					 else
+					 	client.update_with_media((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"), File.new(tweet_image))
+					 end
 				 rescue => e
 					 puts e.message
 				 end
