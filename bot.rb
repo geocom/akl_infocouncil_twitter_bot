@@ -105,11 +105,13 @@ if index.blank? == false
 		 title_type = []
 		 addendum = ""
 		 tweet_image = ""
-		 if item[2][0].content.include?("Addendum")
-			 addendum = " Addendum"
-			 hashtag_types_included << "#CouncilAgendaAddendum"
-		 else
-			 hashtag_types_included << "#CouncilAgenda"
+		 if not item[2][0] == nil
+			 if item[2][0].content.include?("Addendum")
+				 addendum = " Addendum"
+				 hashtag_types_included << "#CouncilAgendaAddendum"
+			 else
+				 hashtag_types_included << "#CouncilAgenda"
+			 end
 		 end
 		 if item[2].count > 0
 			 title_type << "Agenda#{addendum}"
