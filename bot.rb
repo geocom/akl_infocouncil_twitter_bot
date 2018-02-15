@@ -2,6 +2,7 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __FILE__)
 require "rubygems"
 require 'bundler/setup'
 require 'open-uri'
+require 'shellwords'
 Bundler.require
 DAY_ENDINGS = ["", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"]
 index = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/'))
