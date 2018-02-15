@@ -147,7 +147,7 @@ if index.blank? == false
 					    a = item.content.split("\u00A0")
 					    a.delete("")
 					    if a[1] != "" && a[1] != nil
-					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ').gsub("'", "\'\\\'\'")
+					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
 					    end
 					  end
 					end
@@ -157,8 +157,8 @@ if index.blank? == false
 					if not Dir.exist?("#{Dir.pwd}/images")
 						`mkdir #{Dir.pwd}/images`
 					end
-					puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
-					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n").gsub("'", "\'\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
+					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n").gsub("'", "\'\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
 					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 				end
 			end
