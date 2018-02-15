@@ -148,7 +148,7 @@ if index.blank? == false
 					    a = item.content.split("\u00A0")
 					    a.delete("")
 					    if a[1] != "" && a[1] != nil
-					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ').gsub("'", "\\'")
+					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
 					    end
 					  end
 					end
