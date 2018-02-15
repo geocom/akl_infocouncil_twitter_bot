@@ -2,7 +2,6 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __FILE__)
 require "rubygems"
 require 'bundler/setup'
 require 'open-uri'
-require 'shellwords'
 Bundler.require
 DAY_ENDINGS = ["", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"]
 index = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/'))
@@ -148,7 +147,7 @@ if index.blank? == false
 					    a = item.content.split("\u00A0")
 					    a.delete("")
 					    if a[1] != "" && a[1] != nil
-					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
+					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ').gsub("'", "'\''")
 					    end
 					  end
 					end
@@ -158,9 +157,7 @@ if index.blank? == false
 					if not Dir.exist?("#{Dir.pwd}/images")
 						`mkdir #{Dir.pwd}/images`
 					end
-					caption = Shellwords.escape("\\n#{agenda_items.join("\\n")}")
-					puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'#{caption}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
-					`convert -background white -fill navy -pointsize 15 -size 800x caption:'#{caption}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
 					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 				end
 			end
