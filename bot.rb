@@ -6,7 +6,7 @@ Bundler.require
 DAY_ENDINGS = ["", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"]
 index = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/'))
 tweetable_items = []
-
+logfile = "#{Dir.pwd}/log.log"
 twitter_keys = File.read("#{Dir.pwd}/twitter_api_keys.txt").split("\n")
 
 client = Twitter::REST::Client.new do |config|
@@ -15,7 +15,9 @@ client = Twitter::REST::Client.new do |config|
   config.access_token        = twitter_keys[2]
   config.access_token_secret = twitter_keys[3]
 end
-
+if File.exist?(logfile) == false
+	File.open(logfile, 'w') { |file| file.write("Beginning New LogFile") }
+end
 if index.blank? == false
 	if not Dir.exist?("#{Dir.pwd}/meetings")
 		`mkdir #{Dir.pwd}/meetings`
@@ -149,7 +151,9 @@ if index.blank? == false
 					    end
 					  end
 					end
-					puts agenda_items.join("\n")
+					open(logfile, 'a') { |f|
+					  f.puts agenda_items.join("\n")
+					}
 					if not Dir.exist?("#{Dir.pwd}/images")
 						`mkdir #{Dir.pwd}/images`
 					end
@@ -189,8 +193,12 @@ if index.blank? == false
 		 end
 		end
 		 formatted_tweet << "#AucklandCouncil #PublicRecords #{hashtag_types_included.join(" ")}"
-		 puts "##Tweet Starts"
-		 puts formatted_tweet.join("\n")
+		 open(logfile, 'a') { |f|
+		   f.puts "##Tweet Starts"
+		 }
+		 open(logfile, 'a') { |f|
+		   f.puts formatted_tweet.join("\n")
+		 }
 		 begin
 		 	 if tweet_image == ""
 			 	client.update(formatted_tweet.join("\n"))
@@ -199,6 +207,9 @@ if index.blank? == false
 			 end
 		 rescue => e
 			 if e.message.include?("Tweet needs to be a bit shorter")
+			 	 open(logfile, 'a') { |f|
+			 	   f.puts "tweet needs to be shorter"
+			 	 }
 				 begin
 					 if tweet_image == ""
 					 	client.update((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"))
@@ -206,10 +217,14 @@ if index.blank? == false
 					 	client.update_with_media((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"), File.new(tweet_image))
 					 end
 				 rescue => e
-					 puts e.message
+					 open(logfile, 'a') { |f|
+					   f.puts e.message
+					 }
 				 end
 			 else
-				 puts e.message
+				 open(logfile, 'a') { |f|
+				   f.puts e.message
+				 }
 			 end
 		 end
 		 puts "##Tweet Ends"
