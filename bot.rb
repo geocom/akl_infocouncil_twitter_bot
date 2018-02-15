@@ -157,7 +157,7 @@ if index.blank? == false
 					if not Dir.exist?("#{Dir.pwd}/images")
 						`mkdir #{Dir.pwd}/images`
 					end
-					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{agenda_items.join("\n")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\n#{Shellwords.escape("agenda_items.join("\n"))}' #{Shellwords.escape("#{Dir.pwd}/images/#{url['href'].split("/").last)}")}.png`
 					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 				end
 			end
