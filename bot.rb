@@ -159,6 +159,7 @@ if index.blank? == false
 						`mkdir #{Dir.pwd}/images`
 					end
 					caption = Shellwords.escape("\n#{agenda_items.join("\n")}")
+					puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'#{caption}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 					`convert -background white -fill navy -pointsize 15 -size 800x caption:'#{caption}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
 					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 				end
