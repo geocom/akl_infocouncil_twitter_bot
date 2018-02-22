@@ -127,7 +127,6 @@ if index.blank? == false
 		 end
 		 if item[5].count > 0
 			 title_type << "Minutes Attachements"
-			 hashtag_types_included << "#CouncilMinutes"
 		 end
 		  formatted_tweet << "#{item[1]} #{title_type.join(" & ")} for the #{item[0].mday}#{DAY_ENDINGS[item[0].mday]} of #{item[0].strftime("%B %Y")}"
 		 ##This deals with Agendas
