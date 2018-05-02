@@ -44,9 +44,9 @@ if index.blank? == false
 		end
 		##Now that this meeting has been registered we need to tell it what has been uploaded so that we can tweet it out. and save it so that next time we won't tweet the same thing.
 		agenda_items = []
-		agenda_attachements = []
+		agenda_attachments = []
 		minutes = []
-		minutes_attachements = []
+		minutes_attachments = []
 
 		changes_to_folder = [item[0], item[1]]
 
@@ -68,7 +68,7 @@ if index.blank? == false
 				##Write the file so we know its added
 				File.open("#{dated_path}/#{foldername}/#{item_filename}.item", 'w') { |file| file.write("") }
 
-				agenda_attachements << item
+				agenda_attachments << item
 			end
 		end
 
@@ -89,15 +89,15 @@ if index.blank? == false
 				##Write the file so we know its added
 				File.open("#{dated_path}/#{foldername}/#{item_filename}.item", 'w') { |file| file.write("") }
 
-				minutes_attachements << item
+				minutes_attachments << item
 			end
 		end
 		changes_to_folder << agenda_items
-		changes_to_folder << agenda_attachements
+		changes_to_folder << agenda_attachments
 		changes_to_folder << minutes
-		changes_to_folder << minutes_attachements
+		changes_to_folder << minutes_attachments
 
-		if agenda_items.count > 0 or agenda_attachements.count > 0 or minutes.count > 0 or minutes_attachements.count > 0
+		if agenda_items.count > 0 or agenda_attachments.count > 0 or minutes.count > 0 or minutes_attachments.count > 0
 			tweetable_items << changes_to_folder
 		end
 	end
@@ -126,7 +126,7 @@ if index.blank? == false
 			 hashtag_types_included << "#CouncilMinutes"
 		 end
 		 if item[5].count > 0
-			 title_type << "Minutes Attachements"
+			 title_type << "Minutes Attachments"
 		 end
 		  formatted_tweet << "#{item[1]} #{title_type.join(" & ")} for the #{item[0].mday}#{DAY_ENDINGS[item[0].mday]} of #{item[0].strftime("%B %Y")}"
 		 ##This deals with Agendas
@@ -162,7 +162,7 @@ if index.blank? == false
 				end
 			end
 		 end
-		 ##agenda attachements
+		 ##agenda attachments
 		 if not item[3].count <= 0
 			 item[3].each do |url|
 				 if url['href'].include?(".PDF") or url['href'].include?(".pdf")
@@ -182,7 +182,7 @@ if index.blank? == false
 				end
 			end
 		 end
-		 ##Miniutes attachements
+		 ##Miniutes attachments
 		 if not item[5].count <= 0
 		 item[5].each do |url|
 			 if url['href'].include?(".PDF") or url['href'].include?(".pdf")
