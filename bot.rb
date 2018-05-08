@@ -184,7 +184,7 @@ if index.blank? == false
 					`convert -background white -fill navy -gravity center -pointsize 15 -size 800x caption:'\\nTable of Contents\\n#{agenda.title}' #{Dir.pwd}/images/#{title_tmp_filename}.png`
 					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{contents_tmp_filename}.png`
 					
-					`convert #{Dir.pwd}/images/#{title_tmp_filename}.png #{Dir.pwd}/images/#{contents_tmp_filename}.png +append #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					`convert #{Dir.pwd}/images/#{title_tmp_filename}.png #{Dir.pwd}/images/#{contents_tmp_filename}.png -append #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
 					`rm -f	#{Dir.pwd}/images/#{title_tmp_filename}.png`
 					`rm -f	#{Dir.pwd}/images/#{contents_tmp_filename}.png`
 					
