@@ -138,26 +138,56 @@ if index.blank? == false
 				else
 					formatted_tweet << "Agenda HTML: http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last}"
 					
-					agenda = Nokogiri::HTML(open("http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last.gsub("_WEB", "")}"))
+					agenda = Nokogiri::HTML(open("http://infocouncil.aucklandcouncil.govt.nz/#{url['href'].split("?URL=").last.gsub("_WEB", "_BMK")}"))
+					
 					agenda_items = []
 					
-					agenda.css(".TOCCell").each do |item|
+					agenda.css(".bpsNavigationListItem a.bpsNavigationListItem").each do |item|
 					  if not item == nil
-					    a = item.content.split("\u00A0")
-					    a.delete("")
-					    if a[1] != "" && a[1] != nil
-					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
-					    end
+					  	if item.parent.parent.parent.values.include?("bpsNavigationBody")
+							a = item.content.split("\t")
+							
+							justified_text = []
+							
+							if not a.first.to_i > 0
+								#is not a number
+								justified_text << a.first.strip
+							end
+							justified_text << a.last.strip
+						    agenda_items << ("#{justified_text.join("")}").gsub(/[\r\n]+/, ' ')
+						end
 					  end
 					end
+					
+					
+#					agenda.css(".TOCCell").each do |item|
+#					  if not item == nil
+#					    a = item.content.split("\u00A0")
+#					    a.delete("")
+#					    if a[1] != "" && a[1] != nil
+#					      agenda_items << (a[1]).gsub(/[\r\n]+/, ' ')
+#					    end
+#					  end
+#					end
 					open(logfile, 'a') { |f|
 					  f.puts agenda_items.join("\n")
 					}
 					if not Dir.exist?("#{Dir.pwd}/images")
 						`mkdir #{Dir.pwd}/images`
 					end
-					puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
-					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					
+					#puts "convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png"
+					#`convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					title_tmp_filename = "top_#{Time.now.to_i}"
+					contents_tmp_filename = "bottom_#{Time.now.to_i}"
+					
+					`convert -background white -fill navy -gravity center -pointsize 15 -size 800x caption:'\\nTable of Contents\\n#{agenda.title}' #{Dir.pwd}/images/#{title_tmp_filename}.png`
+					`convert -background white -fill navy -pointsize 15 -size 800x caption:'\\n#{agenda_items.join("\\n").gsub("'", "\'\\\\'\'")}' #{Dir.pwd}/images/#{contents_tmp_filename}.png`
+					
+					`convert #{Dir.pwd}/images/#{title_tmp_filename}.png #{Dir.pwd}/images/#{contents_tmp_filename}.png +append #{Dir.pwd}/images/#{url['href'].split("/").last}.png`
+					`rm -f	#{Dir.pwd}/images/#{title_tmp_filename}.png`
+					`rm -f	#{Dir.pwd}/images/#{contents_tmp_filename}.png`
+					
 					tweet_image = "#{Dir.pwd}/images/#{url['href'].split("/").last}.png"
 				end
 			end
