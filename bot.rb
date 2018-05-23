@@ -145,17 +145,23 @@ if index.blank? == false
 					agenda.css(".bpsNavigationListItem a.bpsNavigationListItem").each do |item|
 					  if not item == nil
 					  	if item.parent.parent.parent.values.include?("bpsNavigationBody")
-							a = item.content.split("\t")
-							
-							justified_text = []
-							
-							if not a.first.to_i > 0
-								#is not a number
-								justified_text << a.first.strip
-							end
-							justified_text << a.last.strip
+								a = item.content.split("\t")
+								
+								justified_text = []
+								
+								if a.length == 1
+									# only 1 item unable to do any of the testing below so will just put the line in as is 
+									justified_text << a.first.strip
+								else
+									if not a.first.to_i > 0
+										#is not a number
+										justified_text << a.first.strip
+									end
+									
+									justified_text << a.last.strip
+								end
 						    agenda_items << ("#{justified_text.join("")}").gsub(/[\r\n]+/, ' ')
-						end
+							end
 					  end
 					end
 					
@@ -247,15 +253,53 @@ if index.blank? == false
 					 	client.update_with_media((formatted_tweet.first(formatted_tweet.size - 1)).join("\n"), File.new(tweet_image))
 					 end
 				 rescue => e
-					 open(logfile, 'a') { |f|
-					   f.puts e.message
-					 }
+					 if e.message.include?("Tweet needs to be a bit shorter")
+					 	 open(logfile, 'a') { |f|
+					 	   f.puts "tweet still needs to be shorter splitting HTML and PDF into sep tweets"
+					 	 }
+					 	 begin
+					 	 	tweet_html = []
+					 	 	tweet_pdf = []
+					 	 	tweet_html << formatted_tweet[1]
+					 	 	tweet_pdf << formatted_tweet[1]
+					 	 	formatted_tweet.each_with_index do |tweet_content, index|
+				 	 			if tweet_content.include?("HTML")
+				 	 				tweet_html << tweet_content
+				 	 			elsif tweet_content.include?("PDF")
+				 	 				tweet_pdf << tweet_content
+				 	 			else
+				 	 				tweet_html << tweet_content
+				 	 				tweet_pdf << tweet_content
+					 	 		end
+					 	 	end
+					 	 	
+					 		if tweet_image == ""
+					 			client.update(tweet_html.join("\n"))
+					 			client.update(tweet_pdf.join("\n"))
+					 		else
+					 		 	client.update_with_media(tweet_html.join.join("\n"), File.new(tweet_image))
+					 		 	client.update_with_media(tweet_pdf.join("\n"), File.new(tweet_image))
+					 		end
+					 	 rescue => e
+					 		 open(logfile, 'a') { |f|
+					 		   f.puts e.message
+					 		 }
+					 	 end
+					 else
+					 	 open(logfile, 'a') { |f|
+					 	   f.puts e.message
+					 	 }
+					 end
 				 end
 			 else
 				 open(logfile, 'a') { |f|
 				   f.puts e.message
 				 }
 			 end
+		 end
+		 open(logfile, 'a') { |f|
+		 	   f.puts "##Tweet Ends"
+		 	 }
 		 end
 		 puts "##Tweet Ends"
 	 end
