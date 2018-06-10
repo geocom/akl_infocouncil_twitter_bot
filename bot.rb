@@ -26,10 +26,14 @@ if index.blank? == false
 	meetings = []
 
 	index.css('.bpsGridMenuItem', '.bpsGridMenuAltItem').each do |link|
-		meetings << [Date.parse(link.css('.bpsGridDate')[0].content), link.css('.bpsGridCommittee')[0].content, link.css('.bpsGridAgenda')[0], link.css('.bpsGridAttachments')[0], link.css('.bpsGridMinutes')[0], link.css('.bpsGridMinutesAttachments')[0]]
+		sanitised_name = link.css('.bpsGridCommittee')[0].children.first.content.split(" - ").first.strip()
+		address = link.css('.bpsGridCommittee span')[0].content.gsub("\r\n", " ")
+		
+		meetings << [Date.parse(link.css('.bpsGridDate')[0].content), sanitised_name, link.css('.bpsGridAgenda')[0], link.css('.bpsGridAttachments')[0], link.css('.bpsGridMinutes')[0], link.css('.bpsGridMinutesAttachments')[0], address]
 	end
 	#puts meetings
 	meetings.each do |item|
+		
 		dated_path = "#{Dir.pwd}/meetings/#{item[0].strftime("%Y-%m-%d")}"
 		meeting_path = "#{dated_path}/#{item[1].downcase.gsub(" ", "")}"
 		if not Dir.exist?(dated_path)
@@ -37,7 +41,7 @@ if index.blank? == false
 		end
 
 		##Many local board/pannels are in Maori which has some charaters that wont work with file systems.So we need to replace those charaters them.
-		foldername = item[1].downcase.gsub(/[^0-9A-Za-z.\-]/, '_')
+		foldername = item[1].gsub(/[\u0080-\u0090]/, "").scrub.downcase.gsub(/[^0-9A-Za-z.\-]/, '_')
 
 		if not File.exist?("#{dated_path}/#{foldername}")
 			`mkdir #{dated_path}/#{foldername}`
@@ -98,10 +102,11 @@ if index.blank? == false
 		changes_to_folder << minutes_attachments
 
 		if agenda_items.count > 0 or agenda_attachments.count > 0 or minutes.count > 0 or minutes_attachments.count > 0
+			puts "#{item[0]} #{item[1]}"
 			tweetable_items << changes_to_folder
 		end
 	end
-	 tweetable_items.each do |item|
+	tweetable_items.each do |item|
 		 formatted_tweet = []
 		 hashtag_types_included = []
 		 title_type = []
@@ -299,8 +304,7 @@ if index.blank? == false
 		 end
 		 open(logfile, 'a') { |f|
 		 	   f.puts "##Tweet Ends"
-		 	 }
-		 end
+		 }
 		 puts "##Tweet Ends"
-	 end
+	end
 end
