@@ -4,7 +4,7 @@ require 'bundler/setup'
 require 'open-uri'
 Bundler.require
 DAY_ENDINGS = ["", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th", "th", "st"]
-index = Nokogiri::HTML(open('http://infocouncil.aucklandcouncil.govt.nz/'))
+index = Nokogiri::HTML.parse(open('http://infocouncil.aucklandcouncil.govt.nz/'), nil, "UTF-8")
 tweetable_items = []
 logfile = "#{Dir.pwd}/log.log"
 twitter_keys = File.read("#{Dir.pwd}/twitter_api_keys.txt").split("\n")
@@ -41,7 +41,7 @@ if index.blank? == false
 		end
 
 		##Many local board/pannels are in Maori which has some charaters that wont work with file systems.So we need to replace those charaters them.
-		foldername = item[1].gsub(/[\u0080-\u0090]/, "").scrub.downcase.gsub(/[^0-9A-Za-z.\-]/, '_')
+		foldername = item[1].scrub.downcase.gsub(/[^0-9A-Za-z.\-]/, '_')
 
 		if not File.exist?("#{dated_path}/#{foldername}")
 			`mkdir #{dated_path}/#{foldername}`
