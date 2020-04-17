@@ -1,3 +1,6 @@
+# Important Note
+Twitter decided to suspend the akl_infocouncil bot. They refuse to tell me what rules they belive have been broken and as such this bot is now broken as is twitters appeals process. For that reason i'm looking at creating a Masterdon bot and i'm also looking at creating a Telegram bot. I hope to have more information soon.
+
 # akl_infocouncil_twitter_bot
 Code for the twitter bot https://twitter.com/akl_infocouncil
 
